@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moli.mapper.EmpMapper">
+    <resultMap id="empResult" type="Emp">
+        <id  column="emp_id" property="empId"></id>
+        <result column="name" property="name"></result>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="salary" property="salary"/>
+        <result column="dept_id" property="deptId"/>
+    </resultMap>
+    <resultMap id="empDeptResult" type="Emp">
+        <id  column="emp_id" property="empId"></id>
+        <result column="name" property="name"></result>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="salary" property="salary"/>
+        <result column="did" property="deptId"/>
+        <association property="dept" javaType="Dept">
+            <id  column="did" property="deptId"/>
+            <result column="dname" property="dname"/>
+            <result column="location" property="location"/>
+        </association>
+    </resultMap>
+    <select id="selectEmp" resultMap="empResult">
+    select <include refid="allCols"/> from e_emp
+  </select>
+    <select id="selectEmpDept" resultMap="empDeptResult">
+        select emp_id,name,age,sex,salary,e.dept_id did,dname,location from e_emp e LEFT JOIN e_dept d ON e.dept_id=d.dept_id;
+    </select>
+    <select id="selectById"  resultMap="empDeptResult">
+        select emp_id,name,age,sex,salary,e.dept_id did,dname,location from e_emp e LEFT JOIN e_dept d ON e.dept_id=d.dept_id where emp_id=#{empId};
+    </select>
+    <select id="selectByName"  resultMap="empResult">
+        select age from e_emp where name=#{name};
+    </select>
+    <insert id="addEmp">
+        insert into e_emp (name,age,sex,salary,dept_id) values (#{name},#{age},#{sex},#{salary},#{deptId})
+    </insert>
+    <delete id="deleteEmp">
+        delete from e_emp where emp_id=#{empId}
+    </delete>
+    <update id="updateEmpById">
+ update e_emp set name=#{name},age=#{age},sex=#{sex},salary=#{salary},dept_id=#{deptId} WHERE emp_id=#{empId}
+    </update>
+    <sql id="allCols">
+        name,age,sex,salary,dept_id
+    </sql>
+</mapper>
